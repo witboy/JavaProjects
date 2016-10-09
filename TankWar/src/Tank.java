@@ -3,7 +3,16 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Tank {
-	int x,y;
+	public static final int XSPEED = 5;
+	public static final int YSPEED = 5;
+	
+	private int x,y;
+	
+	private boolean bL = false, bR = false, bU = false, bD = false;
+	
+	enum Direction{U,D,L,R,LU,RU,LD,RD,STOP};
+	
+	private Direction dir = Direction.STOP;
 	
 	public Tank(int x, int y) {
 		this.x = x;
@@ -15,26 +24,93 @@ public class Tank {
 		g.setColor(Color.RED);
 		g.fillOval(x, y, 30, 30);
 		g.setColor(c);
+		move();
+	}
+	
+	public void move() {
+		switch(dir){
+		case L:
+			x -= XSPEED;
+			break;
+		case R:
+			x += XSPEED;
+			break;
+		case U:
+			y -= YSPEED;
+			break;
+		case D:
+			y += YSPEED;
+			break;
+		case LU:
+			x -= XSPEED;
+			y -= YSPEED;
+			break;
+		case LD:
+			x -= XSPEED;
+			y += YSPEED;
+			break;
+		case RU:
+			x += XSPEED;
+			y -= YSPEED;
+			break;
+		case RD:
+			x += XSPEED;
+			y += YSPEED;
+			break;
+		case STOP:
+			break;
+		}
+	}
+	
+	public void locateDirection() {
+		if (bL && !bR && !bU && !bD) dir = Direction.L;
+		else if (!bL && bR && !bU && !bD) dir = Direction.R;
+		else if (!bL && !bR && bU && !bD) dir = Direction.U;
+		else if (!bL && !bR && !bU && bD) dir = Direction.D;
+		else if (bL && !bR && bU && !bD) dir = Direction.LU;
+		else if (bL && !bR && !bU && bD) dir = Direction.LD;
+		else if (!bL && bR && bU && !bD) dir = Direction.RU;
+		else if (!bL && bR && !bU && bD) dir = Direction.RD;
+		else dir = Direction.STOP;
 	}
 	
 	public void keyPressed(KeyEvent e) {
 		int kc = e.getKeyCode();
 		switch(kc) {
 		case KeyEvent.VK_RIGHT :
-			x += 5;
+			bR = true;
 			break;
 		case KeyEvent.VK_LEFT:
-			x -= 5;
+			bL = true;
 			break;
 		case KeyEvent.VK_UP:
-			y -= 5;
+			bU = true;
 			break;
 		case KeyEvent.VK_DOWN:
-			y += 5;
-			break;
-		default:
+			bD = true;
 			break;
 		}
+		locateDirection();
+	}
+
+	public void keyReleased(KeyEvent e) {
+		int kc = e.getKeyCode();
+		switch(kc) {
+		case KeyEvent.VK_RIGHT :
+			bR = false;
+			break;
+		case KeyEvent.VK_LEFT:
+			bL = false;
+			break;
+		case KeyEvent.VK_UP:
+			bU = false;
+			break;
+		case KeyEvent.VK_DOWN:
+			bD = false;
+			break;
+		}
+		locateDirection();
+		
 	}
 	
 	

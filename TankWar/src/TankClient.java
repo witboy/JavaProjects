@@ -2,32 +2,53 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class TankClient extends Frame{
-	int x = 50,y = 50;
+	public static final int GAME_WIDTH = 800;
+	public static final int GAME_HIGHT = 600;
+	
+	Tank myTank = new Tank(50,50);
+	
+	Image offScreenImage = null;
+	
 	public void launchFrame(){	
 		this.setLocation(400, 300);
-		this.setSize(800, 600);
+		this.setSize(GAME_WIDTH, GAME_HIGHT);
 		this.setBackground(Color.GREEN);
 		this.setTitle("TankWar");
+		
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 			
 		});
+		
 		this.setResizable(false);
+		this.addKeyListener(new KeyMonitor());
+		
 		this.setVisible(true);
 		
 		new Thread(new PaintThread()).start();
 	}
 
-	@Override
+
 	public void paint(Graphics g) {
-		Color c = g.getColor();
-		g.setColor(Color.RED);
-		g.fillOval(x, y, 30, 30);
-		g.setColor(c);
+		myTank.draw(g);
+	}
+	
+	
+	public void update(Graphics g) {
 		
-		y += 5;
+		if (offScreenImage == null) {
+			offScreenImage = this.createImage(GAME_WIDTH, GAME_HIGHT);
+		}
+		
+		Graphics goffScreen = offScreenImage.getGraphics();
+		Color c = goffScreen.getColor();
+		goffScreen.setColor(Color.GREEN);
+		goffScreen.fillRect(0, 0, GAME_WIDTH, GAME_HIGHT);
+		goffScreen.setColor(c);
+		paint(goffScreen);
+		g.drawImage(offScreenImage, 0, 0, null);
 	}
 
 	public static void main(String[] args) {
@@ -36,8 +57,6 @@ public class TankClient extends Frame{
 	}
 	
 	private class PaintThread implements Runnable {
-
-		@Override
 		public void run() {
 			while(true){
 				repaint();
@@ -47,8 +66,12 @@ public class TankClient extends Frame{
 					e.printStackTrace();
 				}
 			}
-			
-			
+		}
+	}
+	
+	private class KeyMonitor extends KeyAdapter {
+		public void keyPressed(KeyEvent e) {
+			myTank.keyPressed(e);
 		}
 		
 	}

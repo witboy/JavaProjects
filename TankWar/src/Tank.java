@@ -6,23 +6,65 @@ public class Tank {
 	public static final int XSPEED = 5;
 	public static final int YSPEED = 5;
 	
+	public static final int WIDTH = 30;
+	public static final int HIGHT = 30;
+	
 	private int x,y;
+	
+	TankClient tc;
+	
+//	private Missile myMissile;
 	
 	private boolean bL = false, bR = false, bU = false, bD = false;
 	
 	enum Direction{U,D,L,R,LU,RU,LD,RD,STOP};
 	
 	private Direction dir = Direction.STOP;
+	private Direction fireDir = Direction.R;
 	
 	public Tank(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public Tank(int x, int y, TankClient tc) {
+		this(x, y);
+		this.tc = tc;
+	}
 
 	public void draw(Graphics g) {
 		Color c = g.getColor();
 		g.setColor(Color.RED);
-		g.fillOval(x, y, 30, 30);
+		g.fillOval(x, y, WIDTH, HIGHT);
+		
+		g.setColor(Color.BLACK);
+		switch(fireDir){
+		case L:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x, y+Tank.HIGHT/2);
+			break;
+		case R:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x+Tank.WIDTH, y+Tank.HIGHT/2);
+			break;
+		case U:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x+Tank.WIDTH/2, y);
+			break;
+		case D:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x+Tank.WIDTH/2, y+Tank.HIGHT);
+			break;
+		case LU:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x, y);
+			break;
+		case LD:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x, y+Tank.HIGHT);
+			break;
+		case RU:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x+Tank.WIDTH, y);
+			break;
+		case RD:
+			g.drawLine(x+Tank.WIDTH/2, y+Tank.HIGHT/2, x+Tank.WIDTH, y+Tank.HIGHT);
+			break;
+		}
+		
 		g.setColor(c);
 		move();
 	}
@@ -60,6 +102,9 @@ public class Tank {
 		case STOP:
 			break;
 		}
+		
+		if(dir != Direction.STOP) fireDir = dir;
+		
 	}
 	
 	public void locateDirection() {
@@ -72,11 +117,16 @@ public class Tank {
 		else if (!bL && bR && bU && !bD) dir = Direction.RU;
 		else if (!bL && bR && !bU && bD) dir = Direction.RD;
 		else dir = Direction.STOP;
+		
+
 	}
 	
 	public void keyPressed(KeyEvent e) {
 		int kc = e.getKeyCode();
 		switch(kc) {
+		case KeyEvent.VK_CONTROL:
+			fire();
+			break;
 		case KeyEvent.VK_RIGHT :
 			bR = true;
 			break;
@@ -91,6 +141,13 @@ public class Tank {
 			break;
 		}
 		locateDirection();
+	}
+
+	private void fire() {
+		int x = this.x + WIDTH/2 - Missile.WIDTH/2;
+		int y = this.y + HIGHT/2 - Missile.HIGHT/2;
+		tc.myMissile = new Missile(x,y,fireDir);
+		
 	}
 
 	public void keyReleased(KeyEvent e) {

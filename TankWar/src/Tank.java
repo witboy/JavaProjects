@@ -105,6 +105,11 @@ public class Tank {
 		
 		if(dir != Direction.STOP) fireDir = dir;
 		
+		if(x<0) x = 0;
+		if(y<30) y = 30;
+		if(x>TankClient.GAME_WIDTH-Tank.WIDTH) x = TankClient.GAME_WIDTH-Tank.WIDTH;
+		if(y>TankClient.GAME_HIGHT-Tank.HIGHT) y = TankClient.GAME_HIGHT-Tank.HIGHT;
+		
 	}
 	
 	public void locateDirection() {

@@ -7,7 +7,8 @@ public class TankClient extends Frame{
 	public static final int GAME_WIDTH = 800;
 	public static final int GAME_HIGHT = 600;
 	
-	Tank myTank = new Tank(50,50,this);
+	Tank myTank = new Tank(50,50, true, this);
+	Tank enimyTank = new Tank(100,50, false, this);
 	List<Missile> missiles = new ArrayList<Missile>();
 	
 	Image offScreenImage = null;
@@ -44,6 +45,7 @@ public class TankClient extends Frame{
 //			else m.draw(g);
 		}
 		myTank.draw(g);
+		if(enimyTank.isLive())enimyTank.draw(g);
 	}
 	
 	

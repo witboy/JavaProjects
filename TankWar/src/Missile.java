@@ -88,6 +88,7 @@ public class Missile {
 		if(this.getRect().intersects(t.getRect()) && t.isLive()) {
 			tc.missiles.remove(this);
 			t.setLive(false);
+			tc.booms.add(new Boom(x,y,this.tc));
 			return true;
 		}
 		return false;
